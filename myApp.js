@@ -14,7 +14,7 @@ let personSchema = new mongoose.Schema({
   favoriteFoods: [String]
 })
 
-//create Person model from schema
+//create Person () model from schema
 let Person = mongoose.model('Person', personSchema);
 
 const createAndSavePerson = (done) => {
@@ -90,19 +90,31 @@ const findAndUpdate = (personName, done) => {
 };
 
 const removeById = (personId, done) => {
-  done(null /*, data*/);
+  // Delete one document (record) that has a specified search key value (id in this case).
+  Person.findOneAndRemove({_id: personId}, (err, data) => {
+    if (err) return done(err);
+    done(null, data);
+  });
 };
 
 const removeManyPeople = (done) => {
   const nameToRemove = "Mary";
-
-  done(null /*, data*/);
+  // Delete many documents that have specified search key value (name in this case).
+  //IMPORTANT: model.remove() is deprecated. deleteOne, deleteMany and bulkWrite can be used instead.
+  Person.remove({name: nameToRemove}, (err, data) => {
+    if (err) return done(err);
+    done(null, data);
+  });
 };
 
+// Chaining  search query helpers to narrow search results
 const queryChain = (done) => {
   const foodToSearch = "burrito";
-
-  done(null /*, data*/);
+  // find people who like the food specified by the variable named foodToSearch. Sort them by name, limit the results to two documents, and hide their age.
+  Person.find({favoriteFoods: foodToSearch}).sort({name: 'asc'}).limit(2).select('-age').exec((err, data) => {
+    if (err) return done(err);
+    done(null, data);
+  });
 };
 
 /** **Well Done !!**
