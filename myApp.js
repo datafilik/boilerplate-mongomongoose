@@ -31,31 +31,62 @@ const createAndSavePerson = (done) => {
 };
 
 const createManyPeople = (arrayOfPeople, done) => {
-  done(null /*, data*/);
+  // create multiple documents from preson model
+  Person.create(arrayOfPeople, (err, data) =>{
+    if (err) return done(err);
+    done(null, data);
+  });
 };
 
 const findPeopleByName = (personName, done) => {
-  done(null /*, data*/);
+  // query collection(database) to find a documents(records) that has a specific search key (personName in this case)
+  Person.find({name: personName}, (err, data) => {
+    if (err) return done(err);
+    done(null, data);
+  });
 };
 
 const findOneByFood = (food, done) => {
-  done(null /*, data*/);
+  // query collection  to find a single document that match a search key (food in this case)
+  Person.findOne({favoriteFoods: food}, (err, data) => {
+    if (err) return done(err);
+    done(null, data);
+  })
 };
 
 const findPersonById = (personId, done) => {
-  done(null /*, data*/);
+  // find document in collection using  unique ID(_id) as search key
+  Person.findById({_id: personId}, (err, data) => {
+    if (err) return done(err);
+    done(null, data);
+  });
 };
 
 const findEditThenSave = (personId, done) => {
   const foodToAdd = "hamburger";
-
-  done(null /*, data*/);
+  // find document
+  Person.findById({_id: personId}, (err, data) => {
+    if (err) {
+      return done(err)
+    }else{
+      // edit document
+      data.favoriteFoods.push(foodToAdd);
+      // save edited document
+      data.save((err, data) => {
+        if (err) return done(err);
+        done(null, data)
+      });
+    }
+  });
 };
 
 const findAndUpdate = (personName, done) => {
   const ageToSet = 20;
-
-  done(null /*, data*/);
+  /* finds document from collection using name as search key, then updates the age value of the document, then returns the new update document setting option value of new to true*/
+  Person.findOneAndUpdate({name: personName}, {age: ageToSet}, {new: true}, (err, data) => {
+    if (err) return done(err);
+    done(null, data);
+  });
 };
 
 const removeById = (personId, done) => {
